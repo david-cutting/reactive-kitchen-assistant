@@ -1,6 +1,16 @@
 import React, {Component} from "react";
 import {Barcode, BarcodePicker, CameraAccess, CameraSettings, ScanSettings} from "scandit-sdk";
 import ScanditBarcodeScanner from "scandit-sdk-react";
+import PropTypes from 'prop-types';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
+import {CameraAlt} from "@material-ui/icons";
+import {IconButton} from "@material-ui/core";
 
 class BarcodeScanner extends Component {
     // FIXME: Need way to register individual apps with unique key. Need way to keep this from github in future
@@ -12,7 +22,7 @@ class BarcodeScanner extends Component {
         this.state = {
             shouldShowScannerComponent: false,  // Don't show the scanner
             paused: true,                       // and pause the scanning to start
-            accessCamera: false,                // and don't access the camera to begin
+            accessCamera: false,                // and don't access the ca,mera to begin
             cameras: [],                        // Array containing cameras that are available
             cameraSettings: {
                 resolutionPreference: CameraSettings.ResolutionPreference.HD
@@ -58,7 +68,7 @@ class BarcodeScanner extends Component {
 
                     // Picker events
                     onReady={() => this.setState({ scannerReady: true })}
-                    onScan={console.log}
+                    onScan={processScan}
                     onScanError={console.log}
                     // Fallback methods ?
                     // onSubmitFrame={console.log}
@@ -136,7 +146,6 @@ class BarcodeScanner extends Component {
 
         return (
             <div>
-                <h1>react-scandit-websdk Demo</h1>
                 <div>
                     {showButton}
                     {hideButton}
@@ -149,4 +158,70 @@ class BarcodeScanner extends Component {
     }
 }
 
-export default BarcodeScanner;
+function processScan(props) {
+    const newCode = "https://world.openfoodfacts.org/api/v0/product/" + props.barcodes[0].data + ".json";
+    fetch(newCode)
+        .then(res => res.json())
+        .then(res => {
+            storeScanJSON(res);
+        });
+}
+
+function storeScanJSON(json) {
+    // If the barcode number we scanned isn't in the database
+    if(json.status === 0) {
+        document.getElementById("scanner-output").innerHTML = "Hmmm... I don't know that one.";
+        return;
+    }
+
+    const name = json.product.product_name_en;
+    const code = json.product.code;
+
+    document.getElementById("scanner-output").innerHTML = name + ' ' + code;
+}
+
+function ScannerDialog(props) {
+    const { fullScreen } = props;
+    const [open, setOpen] = React.useState(false);
+
+    function handleClickOpen() {
+        setOpen(true);
+    }
+
+    function handleClose() {
+        setOpen(false);
+    }
+
+    return (
+        <div>
+            <IconButton onClick={handleClickOpen}>
+                <CameraAlt />
+            </IconButton>
+            <Dialog
+                fullScreen={fullScreen}
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="responsive-dialog-title"
+            >
+                <DialogTitle id="responsive-dialog-title">{"Scan an item"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id={"scanner-output"}>
+
+                    </DialogContentText>
+                    <BarcodeScanner />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
+}
+
+ScannerDialog.propTypes = {
+    fullScreen: PropTypes.bool.isRequired,
+};
+
+export default withMobileDialog()(ScannerDialog);

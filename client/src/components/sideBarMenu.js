@@ -1,18 +1,19 @@
-import React from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
-import SettingsIcon from '@material-ui/icons/Settings'
-import AccountIcon from '@material-ui/icons/AccountBox'
+import React from 'react'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import Dashboard from '@material-ui/icons/Dashboard'
+import ShoppingCart from '@material-ui/icons/ShoppingCart'
 import RestaurantMenu from '@material-ui/icons/RestaurantMenu'
 import Favorite from '@material-ui/icons/Favorite'
-import {Link} from 'react-router-dom';
-import navigation from '../App.json';
-import * as Icons from '@material-ui/icons';
+import {Link} from 'react-router-dom'
+import navigation from '../App.json'
+import Kitchen from '@material-ui/icons/Kitchen'
+import BarChart from '@material-ui/icons/BarChart'
+import Layers from '@material-ui/icons/Layers'
+import AccountBox from '@material-ui/icons/AccountBox'
+import Settings from '@material-ui/icons/Settings'
+import Train from '@material-ui/icons/Train'
 
 
 const getIcon = (name) => {
@@ -21,12 +22,35 @@ const getIcon = (name) => {
             return (<RestaurantMenu/>);
         case "Favorite":
             return (<Favorite/>);
+        case "Dashboard":
+            return (<Dashboard/>);
+        case "Kitchen":
+            return (<Kitchen/>);
+        case "ShoppingCart":
+            return (<ShoppingCart/>);
+        case "BarChart":
+            return (<BarChart/>);
+        case "Layers":
+            return (<Layers/>);
+        case "AccountBox":
+            return (<AccountBox/>);
+        case "Settings":
+            return (<Settings/>);
         default:
-            return (<LayersIcon/>);
+            return (<Train/>);
     }
 };
 
 const mainNavItems = navigation.App["primary-nav"].map((each) =>
+    <ListItem button component={Link} to={each.path}>
+        <ListItemIcon>
+            {getIcon(each.icon)}
+        </ListItemIcon>
+        <ListItemText primary={each.name} />
+    </ListItem>
+);
+
+const secondaryNavItems = navigation.App["secondary-nav"].map((each) =>
     <ListItem button component={Link} to={each.path}>
         <ListItemIcon>
             {getIcon(each.icon)}
@@ -43,17 +67,6 @@ export const mainListItems = (
 
 export const secondaryListItems = (
     <div>
-        <ListItem button component={Link} to={"/account"}>
-            <ListItemIcon>
-                <AccountIcon />
-            </ListItemIcon>
-            <ListItemText primary="Account" />
-        </ListItem>
-        <ListItem button component={Link} to={"/settings"}>
-            <ListItemIcon>
-                <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-        </ListItem>
+        {secondaryNavItems}
     </div>
 );

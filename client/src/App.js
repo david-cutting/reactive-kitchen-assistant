@@ -2,18 +2,25 @@ import React, { Component } from 'react';
 import './App.css';
 import InterfaceFramework from './components/InterfaceFramework';
 import { Route, Router } from "react-router-dom";
-import Landing from "./components/Landing";
-import MyRecipes from "./components/MyRecipes";
-import Pantry from "./components/Pantry";
 import createHistory from 'history/createBrowserHistory'
+import Nav from './App.json'
+
+import MyPantry from "./components/MyPantry";
 
 const history = createHistory();
 history.listen((location, action) => {
-
-
-
-    console.log(`The current URL is ${location.pathname}${location.search}${location.hash}`)
-    console.log(`The last navigation action was ${action}`)
+    for (let NavItem in Nav.App["primary-nav"]) {
+        if(Nav.App["primary-nav"][NavItem].path === location.pathname) {
+            document.getElementById('page-title').innerHTML = Nav.App["primary-nav"][NavItem].name;
+            return;
+        }
+    }
+    for (let NavItem in Nav.App["secondary-nav"]) {
+        if(Nav.App["secondary-nav"][NavItem].path === location.pathname) {
+            document.getElementById('page-title').innerHTML = Nav.App["secondary-nav"][NavItem].name;
+            break;
+        }
+    }
 });
 
 
@@ -31,13 +38,11 @@ class App extends Component {
             <Router history={history}>
                 <div className="App">
                     <InterfaceFramework>
-                        <h1>Users</h1>
-                        {this.state.users.map(user =>
-                            <div key={user.id}>{user.username}</div>
-                        )}
-                        <Route path="/home" component={Landing}/>
-                        <Route path="/my-recipes" component={MyRecipes}/>
-                        <Route path="/my-pantry" component={Pantry}/>
+                        {/*<h1>Users</h1>*/}
+                        {/*{this.state.users.map(user =>*/}
+                        {/*    <div key={user.id}>{user.username}</div>*/}
+                        {/*)}*/}
+                        <Route path="/my-pantry" component={MyPantry}/>
                     </InterfaceFramework>
                 </div>
             </Router>

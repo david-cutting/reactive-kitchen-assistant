@@ -5,10 +5,12 @@
   "dependencies": {
     "@material-ui/core": "^4.1.0",
     "@material-ui/icons": "^4.1.0",
+    "braces": "^3.0.2",
     "clsx": "^1.0.4",
     "history": "^4.9.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-infinite-scroller": "^1.2.4",
     "react-native": "^0.59.9",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
