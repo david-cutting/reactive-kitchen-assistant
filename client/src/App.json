@@ -1,0 +1,52 @@
+{"App": {
+  "primary-nav": [
+    {
+      "name": "Home",
+      "path": "/home",
+      "icon": "RestaurantMenu"
+    },
+    {
+      "name": "My Recipes",
+      "path": "/my-recipes",
+      "icon": "Favorite"
+    },
+    {
+      "name": "Discover Recipes",
+      "path": "/discover-recipes",
+      "icon": "Dashboard"
+    },
+    {
+      "name": "My Pantry",
+      "path": "/my-pantry",
+      "icon": "Kitchen"
+    },
+    {
+      "name": "Shopping List",
+      "path": "/shopping-list",
+      "icon": "ShoppingCart"
+    },
+    {
+      "name": "Reports",
+      "path": "/reports",
+      "icon": "BarChart"
+    },
+    {
+      "name": "Integrations",
+      "path": "/integrations",
+      "icon": "Layers"
+    }
+  ],
+
+  "secondary-nav": [
+    {
+      "name" : "Account",
+      "path" : "/account",
+      "icon" : "AccountBox"
+    },
+    {
+      "name" : "Settings",
+      "path" : "/settings",
+      "icon" : "Settings"
+    }
+  ]
+}}
