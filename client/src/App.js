@@ -38,10 +38,10 @@ class App extends Component {
             <Router history={history}>
                 <div className="App">
                     <InterfaceFramework>
-                        {/*<h1>Users</h1>*/}
-                        {/*{this.state.users.map(user =>*/}
-                        {/*    <div key={user.id}>{user.username}</div>*/}
-                        {/*)}*/}
+                        <h1>Users</h1>
+                        {this.state.users.map(user =>
+                            <div key={user.id}>{user.username}</div>
+                        )}
                         <Route path="/my-pantry" component={MyPantry}/>
                     </InterfaceFramework>
                 </div>

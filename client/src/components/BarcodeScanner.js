@@ -33,7 +33,7 @@ class BarcodeScanner extends Component {
             enableTorchToggle: true,            // Turns the flash on and off
             guiStyle: BarcodePicker.GuiStyle.NONE,
             playSoundOnScan: true,              // Beeping sound when you scan something
-            targetScanningFPS: 5,               // The lower the number, the less resources required
+            targetScanningFPS: 30,               // The lower the number, the less resources required
             vibrateOnScan: false,               // Only on devices with haptic feedback
             videoFit: BarcodePicker.ObjectFit.COVER,
             visible: true,
@@ -174,10 +174,28 @@ function storeScanJSON(json) {
         return;
     }
 
-    const name = json.product.product_name_en;
+    const name = json.product.product_name;
     const code = json.product.code;
 
     document.getElementById("scanner-output").innerHTML = name + ' ' + code;
+
+    const data = {
+        code: json.product.code,
+        product_name: json.product.product_name,
+        generic_name: json.product.generic_name,
+        region: "world",
+        quantity: json.product.quantity,
+    };
+
+    console.log(data);
+
+    fetch('/catalog/create', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    }).then((res) => {
+        console.log(res);
+    })
 }
 
 function ScannerDialog(props) {
