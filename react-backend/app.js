@@ -8,10 +8,11 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var catalogRouter = require('./routes/catalog');
 var bodyParser = require('body-parser');
+import apiKeys from '../apiKeys'
 
 // Set up mongoose connection
 var mongoose = require('mongoose');
-var mongoDB = '';
+var mongoDB = apiKeys["mongodb-secret-url"];
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));

@@ -37,3 +37,4 @@ package-lock.json
 *.gz
 coverage
 benchmarks/graphs
+apiKeys.json

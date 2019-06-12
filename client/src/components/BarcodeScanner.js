@@ -11,11 +11,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import {CameraAlt} from "@material-ui/icons";
 import {IconButton} from "@material-ui/core";
+import apiKeys from '../../../apiKeys'
 
 class BarcodeScanner extends Component {
     // FIXME: Need way to register individual apps with unique key. Need way to keep this from github in future
-    licenseKey = "***REMOVED***";
-
+    licenseKey = apiKeys["scandit-license-key"];
     constructor(props) {
         super(props);
         // Build a state, can be updated with calls to this.setState()
