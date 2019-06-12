@@ -4,7 +4,8 @@ import {makeStyles} from "@material-ui/core";
 import {Container, IconButton, Typography, Divider, Paper} from '@material-ui/core';
 import {Add, Edit, CameraAlt} from '@material-ui/icons'
 import './BarcodeScanner'
-import ScannerDialog from "./BarcodeScanner";
+import ReactiveDialog from "./ReactiveDialog";
+import BarcodeScanner from "./BarcodeScanner";
 
 
 const useStyles = makeStyles(theme => ({
@@ -28,6 +29,15 @@ const useStyles = makeStyles(theme => ({
 function MyPantry() {
     const classes = useStyles();
 
+    // Scanner dialog box variables
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const showDialog = () => {
+        setOpenDialog(true);
+    };
+    const hideDialog = () => {
+        setOpenDialog(false);
+    };
+
     return (
         <div>
             <Container maxWidth="xs" className={classes.container}>
@@ -42,7 +52,9 @@ function MyPantry() {
                         </Typography>
                     </Grid>
                     <Grid item xs>
-                        <ScannerDialog/>
+                        <IconButton onClick={showDialog}>
+                            <CameraAlt />
+                        </IconButton>
                         <Typography variant="body2" color="textSecondary" align="center">
                             Scan Item
                         </Typography>
@@ -60,6 +72,10 @@ function MyPantry() {
                 <br/>
                 <Divider />
             </Container>
+
+            <ReactiveDialog open={openDialog} closeHandler={hideDialog}>
+                <BarcodeScanner />
+            </ReactiveDialog>
 
             {/* The news feed feature */}
             <Container maxWidth="md" className={classes.container}>
