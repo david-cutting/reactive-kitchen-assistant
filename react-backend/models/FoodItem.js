@@ -12,15 +12,5 @@ const FoodItem = new Schema(
     }
 );
 
-// Virtual for food's JSON lookup URL
-FoodItem
-    .virtual('url-json')
-    .get(function () {
-        if(this.region != null) {   // If we can localize it it *might* save us some time
-            return 'https://' + this.region + '.openfoodfacts.org/api/v0/product/' + this.code + '.json';
-        }
-        return 'https://world.openfoodfacts.org/api/v0/product/' + this.code + '.json';
-    });
-
 //Export model
 module.exports = mongoose.model('FoodItem', FoodItem);

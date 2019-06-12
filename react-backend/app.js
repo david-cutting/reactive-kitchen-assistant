@@ -8,7 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var catalogRouter = require('./routes/catalog');
 var bodyParser = require('body-parser');
-import apiKeys from '../apiKeys'
+var apiKeys = require('./apiKeys');
 
 // Set up mongoose connection
 var mongoose = require('mongoose');
