@@ -4,7 +4,7 @@ var async = require('async');
 // Handle foodItem create on POST.
 exports.fooditem_create_post = [
     (req, res, next) => {
-        console.log(req.body);
+        console.log('Scanned code: ' + req.body.code);
 
         let instance = new FoodItem({
             code: req.body.code,
@@ -19,7 +19,6 @@ exports.fooditem_create_post = [
                 console.log(err);
                 return next(err);
             }
-            console.log("good");
             // saved!
         });
     }

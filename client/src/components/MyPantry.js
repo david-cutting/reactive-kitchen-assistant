@@ -74,7 +74,7 @@ function MyPantry() {
             </Container>
 
             <ReactiveDialog open={openDialog} closeHandler={hideDialog}>
-                <BarcodeScanner />
+                <BarcodeScanner closeHandler={hideDialog} isVisible={true}/>
             </ReactiveDialog>
 
             {/* The news feed feature */}

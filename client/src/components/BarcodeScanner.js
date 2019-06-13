@@ -2,28 +2,17 @@ import React, {Component} from "react";
 import {Barcode, BarcodePicker, CameraAccess, CameraSettings, ScanSettings} from "scandit-sdk";
 import ScanditBarcodeScanner from "scandit-sdk-react";
 import apiKeys from '../apiKeys';
+import PropTypes from "prop-types";
 
 export default class BarcodeScanner extends Component {
-    // FIXME: Need way to register individual apps with unique key. Need way to keep this from github in future
     licenseKey = apiKeys["scandit-license-key"];
     constructor(props) {
         super(props);
-        // Build a state, can be updated with calls to this.setState()
         this.state = {
-            shouldShowScannerComponent: false,  // Don't show the scanner
-            paused: true,                       // and pause the scanning to start
-            accessCamera: false,                // and don't access the ca,mera to begin
-            cameras: [],                        // Array containing cameras that are available
-            cameraSettings: {
-                resolutionPreference: CameraSettings.ResolutionPreference.HD
-            },
-            enableCameraSwitcher: true,         // Allow switching from front to back facing camera
-            enablePinchToZoom: true,            // Supposed on only work in chrome
-            enableTapToFocus: true,             // Same story
-            enableTorchToggle: true,            // Turns the flash on and off
+            paused: false,                       // and pause the scanning to start
             guiStyle: BarcodePicker.GuiStyle.NONE,
             playSoundOnScan: true,              // Beeping sound when you scan something
-            targetScanningFPS: 30,               // The lower the number, the less resources required
+            targetScanningFPS: 15,               // The lower the number, the less resources required
             vibrateOnScan: false,               // Only on devices with haptic feedback
             videoFit: BarcodePicker.ObjectFit.COVER,
             visible: true,
@@ -50,7 +39,7 @@ export default class BarcodeScanner extends Component {
 
     getScanner = () => {
         return (
-            this.state.shouldShowScannerComponent && (
+            this.props.isVisible && (
                 <ScanditBarcodeScanner
                     // Library licensing & configuration options (see https://docs.scandit.com/stable/web/globals.html#configure)
                     licenseKey={this.licenseKey}
@@ -58,16 +47,13 @@ export default class BarcodeScanner extends Component {
 
                     // Picker events
                     onReady={() => this.setState({ scannerReady: true })}
-                    onScan={processScan}
+                    onScan={this.processScan}
                     onScanError={console.log}
-                    // Fallback methods ?
-                    // onSubmitFrame={console.log}
-                    // onProcessFrame={console.log}
 
                     // Picker options
                     scanSettings={this.getScanSettings()}
                     paused={this.state.paused}
-                    accessCamera={this.state.accessCamera}
+                    accessCamera={this.props.isVisible}
                     camera={this.state.activeCamera}
                     cameraSettings={this.state.cameraSettings}
                     enableCameraSwitcher={this.state.enableCameraSwitcher}
@@ -82,111 +68,66 @@ export default class BarcodeScanner extends Component {
                     visible={this.state.visible}
                     singleImageMode={this.state.singleImageMode} // only set on component creation, can not be changed afterwards
 
-
                     // FIXME: figure out how to reuse the scanner in initialization, like how the documentation says is possible
                 />
             )
         );
     };
 
+    processScan = (props) => {
+        this.setState({ paused: true }); // Turn the scanner off once we've acquired a target
+
+        const newCode = "https://world.openfoodfacts.org/api/v0/product/" + props.barcodes[0].data + ".json";
+        fetch(newCode)
+            .then(res => res.json())
+            .then(json => {
+                const outField = document.getElementById('scanner-output');
+
+                // If the barcode number we scanned isn't in the database
+                if(json.status === 0) {
+                    outField.innerHTML = "Hmmm... I don't know that one. You can add it manually and associate that barcode with it.";
+                    this.setState({ paused: false });   // Turn the scanner back on
+                    return;
+                }
+
+                outField.innerHTML = json.product.product_name + ' ' + json.product.code;
+
+                const data = {
+                    code: json.product.code,
+                    product_name: json.product.product_name,
+                    generic_name: json.product.generic_name,
+                    region: "world",
+                    quantity: json.product.quantity,
+                };
+
+                fetch('/catalog/create', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+
+                setTimeout(() => {
+                    this.setState({shouldShowScannerComponent: false});
+                    this.props.closeHandler();
+                }, 1500);
+            });
+
+    };
 
     render() {
         const scanner = this.getScanner();
 
-        // FIXME: initialize, show, then hide and turn off as soon as a code is captured, no buttons required
-
-        const showButton = (
-            <button
-                onClick={() => this.setState({ shouldShowScannerComponent: true })}
-                disabled={this.state.shouldShowScannerComponent}
-            >
-                Show
-            </button>
-        );
-        const hideButton = (
-            <button
-                onClick={() =>
-                    this.setState({
-                        shouldShowScannerComponent: false,
-                        scannerReady: false
-                    })
-                }
-                disabled={!this.state.shouldShowScannerComponent}
-            >
-                Hide
-            </button>
-        );
-
-        const startButton = (
-            <button
-                onClick={() => this.setState({ paused: false, accessCamera: true })}
-                disabled={!this.state.shouldShowScannerComponent || !this.state.paused}
-            >
-                Start
-            </button>
-        );
-        const stopButton = (
-            <button
-                onClick={() => this.setState({ paused: true })}
-                disabled={!this.state.shouldShowScannerComponent || this.state.paused}
-            >
-                Pause
-            </button>
-        );
-
         return (
             <div>
-                <p id="scanner-output"></p>
-                <div>
-                    {showButton}
-                    {hideButton}
-                </div>
-                {startButton}
-                {stopButton}
+                <h4 id="scanner-output" > </h4>
                 {scanner}
             </div>
         );
     }
 }
 
-function processScan(props) {
-
-    const newCode = "https://world.openfoodfacts.org/api/v0/product/" + props.barcodes[0].data + ".json";
-    fetch(newCode)
-        .then(res => res.json())
-        .then(res => {
-            storeScanJSON(res);
-        });
-}
-
-function storeScanJSON(json) {
-    // If the barcode number we scanned isn't in the database
-    if(json.status === 0) {
-        document.getElementById("scanner-output").innerHTML = "Hmmm... I don't know that one.";
-        return;
-    }
-
-    const name = json.product.product_name;
-    const code = json.product.code;
-
-    document.getElementById("scanner-output").innerHTML = name + ' ' + code;
-
-    const data = {
-        code: json.product.code,
-        product_name: json.product.product_name,
-        generic_name: json.product.generic_name,
-        region: "world",
-        quantity: json.product.quantity,
-    };
-
-    console.log(data);
-
-    fetch('/catalog/create', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    }).then((res) => {
-        console.log(res);
-    })
-}
+BarcodeScanner.propTypes = {
+    closeHandler: PropTypes.func.isRequired,
+    isVisible: PropTypes.bool.isRequired,
+};
 
