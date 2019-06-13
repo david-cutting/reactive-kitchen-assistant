@@ -3,19 +3,20 @@ import {Barcode, BarcodePicker, CameraAccess, CameraSettings, ScanSettings} from
 import ScanditBarcodeScanner from "scandit-sdk-react";
 import apiKeys from '../apiKeys';
 import PropTypes from "prop-types";
+import Typography from '@material-ui/core/Typography'
 
 export default class BarcodeScanner extends Component {
     licenseKey = apiKeys["scandit-license-key"];
     constructor(props) {
         super(props);
         this.state = {
+            disableScanDB: true,
             paused: false,                       // and pause the scanning to start
             guiStyle: BarcodePicker.GuiStyle.NONE,
             playSoundOnScan: true,              // Beeping sound when you scan something
             targetScanningFPS: 15,               // The lower the number, the less resources required
-            vibrateOnScan: false,               // Only on devices with haptic feedback
+            vibrateOnScan: false,
             videoFit: BarcodePicker.ObjectFit.COVER,
-            visible: true,
             singleImageMode: {
                 desktop: { always: false, allowFallback: true },
                 mobile: { always: false, allowFallback: true }
@@ -100,11 +101,13 @@ export default class BarcodeScanner extends Component {
                     quantity: json.product.quantity,
                 };
 
-                fetch('/catalog/create', {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data),
-                });
+                if(!this.state.disableScanDB) {
+                    fetch('/catalog/create', {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(data),
+                    });
+                }
 
                 setTimeout(() => {
                     this.setState({shouldShowScannerComponent: false});
@@ -119,7 +122,9 @@ export default class BarcodeScanner extends Component {
 
         return (
             <div>
-                <h4 id="scanner-output" > </h4>
+                <Typography variant="body2" id="scanner-output" color="textPrimary">
+                    |
+                </Typography>
                 {scanner}
             </div>
         );

@@ -18,7 +18,7 @@ function ReactiveDialog(props) {
                 onClose={props.closeHandler}
                 aria-labelledby="responsive-dialog-title"
             >
-                <DialogTitle id="responsive-dialog-title">{"Scan an item"}</DialogTitle>
+                <DialogTitle id="responsive-dialog-title">Scan an item</DialogTitle>
                 <DialogContent>
                     {props.children}
                 </DialogContent>
