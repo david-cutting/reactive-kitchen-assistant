@@ -26,17 +26,63 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function MyPantry() {
+function MyPantry(props) {
     const classes = useStyles();
 
-    // Scanner dialog box variables
-    const [openDialog, setOpenDialog] = React.useState(false);
-    const showDialog = () => {
-        setOpenDialog(true);
-    };
-    const hideDialog = () => {
-        setOpenDialog(false);
-    };
+    const [scanner, setScanner] = React.useState({
+        'visible'   :   false,
+        'camAccess' :   false,
+        'paused'    :   true,
+        'dialogueOpen'  : false,
+    });
+
+    function showScannerDialogue() {
+        setScanner({ 'visible' : true, 'camAccess' : true, 'paused' : false, 'dialogueOpen' : true });
+    }
+    function pauseScanner() {   // Undo with showScannerDialogue
+        setScanner({ 'visible' : true, 'camAccess' : true, 'paused' : true, 'dialogueOpen' : true });
+    }
+    function hideScanner() {    // Undo with showScannerDialogue();
+        setScanner({ 'visible' : false, 'camAccess' : false, 'paused' : true, 'dialogueOpen' : true });
+    }
+    function hideScannerDialogue() {
+        setScanner({ 'visible' : false, 'camAccess' : false, 'paused' : true, 'dialogueOpen' : false });
+    }
+    function processBarcodeNum(data) {
+        pauseScanner();
+        const openFoodQuery = "https://world.openfoodfacts.org/api/v0/product/" + data.barcodes[0].data + ".json";
+        fetch(openFoodQuery)
+            .then(res => res.json())    // Wait for all of the JSON to come out of the server
+            .then(json => {
+                if(json.status === 0) {         // If the barcode number we scanned isn't in the database
+                    showScannerDialogue();
+                    return;
+                }
+
+                const data = {
+                    code: json.product.code,
+                    product_name: json.product.product_name,
+                    generic_name: json.product.generic_name,
+                    region: "world",
+                    quantity: json.product.quantity,
+                };
+
+                fetch('/catalog/create', {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data),
+                });
+
+                setTimeout(() => {
+                    hideScannerDialogue();
+                }, 1500);
+            });
+        return(
+            <div>
+
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -52,7 +98,7 @@ function MyPantry() {
                         </Typography>
                     </Grid>
                     <Grid item xs>
-                        <IconButton onClick={showDialog}>
+                        <IconButton onClick={showScannerDialogue}>
                             <CameraAlt />
                         </IconButton>
                         <Typography variant="body2" color="textSecondary" align="center">
@@ -73,8 +119,13 @@ function MyPantry() {
                 <Divider />
             </Container>
 
-            <ReactiveDialog open={openDialog} closeHandler={hideDialog}>
-                <BarcodeScanner closeHandler={hideDialog} isVisible={true}/>
+            <ReactiveDialog open={scanner.dialogueOpen} closeHandler={hideScannerDialogue}>
+                <BarcodeScanner
+                    closeHandler={hideScannerDialogue}
+                    acquisitionVisible={scanner.visible}
+                    barcodeHandler={processBarcodeNum}
+                    cameraAccess={scanner.camAccess}
+                    acquisitionPaused={scanner.paused} />
             </ReactiveDialog>
 
             {/* The news feed feature */}

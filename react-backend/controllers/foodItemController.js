@@ -1,5 +1,4 @@
 const FoodItem = require('../models/FoodItem');
-var async = require('async');
 
 // Handle foodItem create on POST.
 exports.fooditem_create_post = [
