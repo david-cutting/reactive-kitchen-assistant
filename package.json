@@ -5,7 +5,6 @@
   "dependencies": {
     "@material-ui/core": "^4.1.0",
     "@material-ui/icons": "^4.1.0",
-    "braces": "^3.0.2",
     "clsx": "^1.0.4",
     "firebase": "^6.1.1",
     "firebaseui": "^4.0.0",
@@ -13,13 +12,10 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-firebaseui": "^3.1.2",
-    "react-infinite-scroller": "^1.2.4",
-    "react-native": "^0.59.9",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
     "scandit-sdk": "^4.3.0",
-    "scandit-sdk-react": "^1.0.2",
-    "typescript": "^3.5.1"
+    "scandit-sdk-react": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
