@@ -7,7 +7,6 @@ import './BarcodeScanner'
 import ReactiveDialog from "./ReactiveDialog";
 import BarcodeScanner from "./BarcodeScanner";
 
-
 const useStyles = makeStyles(theme => ({
     content: {
         flexGrow: 1,
@@ -83,6 +82,7 @@ function MyPantry(props) {
             </div>
         )
     }
+
 
     return (
         <div>

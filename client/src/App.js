@@ -23,7 +23,6 @@ history.listen((location, action) => {
     }
 });
 
-
 class App extends Component {
     state = {users: []}
 
