@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import InterfaceFramework from './components/InterfaceFramework';
 import { Route, Router } from "react-router-dom";
-import createHistory from 'history/createBrowserHistory'
+import { createBrowserHistory } from 'history'
 import Nav from './App.json'
 
 import MyPantry from "./components/MyPantry";
@@ -10,7 +10,7 @@ import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 
-const history = createHistory();
+const history = createBrowserHistory();
 history.listen((location, action) => {
     for (let NavItem in Nav.App["primary-nav"]) {
         if(Nav.App["primary-nav"][NavItem].path === location.pathname) {

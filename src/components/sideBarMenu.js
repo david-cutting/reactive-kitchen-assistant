@@ -42,7 +42,7 @@ const getIcon = (name) => {
 };
 
 const mainNavItems = navigation.App["primary-nav"].map((each) =>
-    <ListItem button component={Link} to={each.path}>
+    <ListItem button component={Link} to={each.path} key={each.name}>
         <ListItemIcon>
             {getIcon(each.icon)}
         </ListItemIcon>
@@ -51,7 +51,7 @@ const mainNavItems = navigation.App["primary-nav"].map((each) =>
 );
 
 const secondaryNavItems = navigation.App["secondary-nav"].map((each) =>
-    <ListItem button component={Link} to={each.path}>
+    <ListItem button component={Link} to={each.path} key={each.name}>
         <ListItemIcon>
             {getIcon(each.icon)}
         </ListItemIcon>
