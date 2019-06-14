@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Barcode, BarcodePicker, CameraAccess, CameraSettings, ScanSettings} from "scandit-sdk";
+import {Barcode, BarcodePicker, CameraAccess, ScanSettings} from "scandit-sdk";
 import ScanditBarcodeScanner from "scandit-sdk-react";
 import apiKeys from '../apiKeys';
 import PropTypes from "prop-types";
